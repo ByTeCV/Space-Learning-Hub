@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Holes | Space Learning Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --space-dark: #0a0a2a;
+            --space-blue: #4fc3f7;
+            --space-purple: #7b1fa2;
+            --accent-red: #ff3366;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--space-dark);
+            color: white;
+            background-image: url('images/blackhole-bg.jpg');
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        
+        nav {
+            background-color: rgba(10,10,42,0.9);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--space-blue);
+        }
+        
+        .nav-links a.active {
+            color: var(--accent-red);
+            font-weight: bold;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        h1, h2 {
+            text-align: center;
+            color: var(--accent-red);
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+            background: rgba(0,0,0,0.7);
+            border-radius: 10px;
+            border: 1px solid var(--accent-red);
+        }
+        
+        /* Black Hole Cards */
+        .blackhole-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .blackhole-card {
+            background: rgba(20, 10, 30, 0.8);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 51, 102, 0.2);
+            border: 1px solid var(--accent-red);
+        }
+        
+        .blackhole-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 30px rgba(255, 51, 102, 0.4);
+        }
+        
+        .blackhole-card h3 {
+            color: var(--accent-red);
+            margin-top: 0;
+            border-bottom: 1px solid var(--accent-red);
+            padding-bottom: 0.5rem;
+        }
+        
+        .blackhole-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        /* Simulation Section */
+        .simulation {
+            background: rgba(0,0,0,0.7);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 3rem 0;
+            text-align: center;
+        }
+        
+        #gravity-sim {
+            width: 100%;
+            height: 400px;
+            background: black;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        /* Facts Section */
+        .facts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .fact-card {
+            background: rgba(79, 195, 247, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-red);
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 3rem auto;
+        }
+        
+        .timeline-item {
+            padding: 1.5rem;
+            background: rgba(20, 10, 30, 0.8);
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            position: relative;
+            border-left: 4px solid var(--accent-red);
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: -12px;
+            background-color: var(--accent-red);
+            border-radius: 50%;
+            top: 2rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(10,10,42,0.9);
+            margin-top: 3rem;
+        }
+        
+        /* Simulation Controls */
+        .sim-controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+        .sim-controls .learn-more {
+            display: inline-block;
+            padding: 0.6rem 1.4rem;
+            background: transparent;
+            color: var(--accent-red);
+            border: 2px solid var(--accent-red);
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.05rem;
+            letter-spacing: 0.5px;
+            box-shadow: none;
+            transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+            margin: 0.5rem 0.5rem 0 0;
+            cursor: pointer;
+        }
+        
+        .sim-controls .learn-more:hover, .sim-controls .learn-more:focus {
+            background: var(--accent-red);
+            color: #fff;
+            border-color: #fff;
+            transform: translateY(-2px) scale(1.04);
+            outline: none;
+        }
+        
+        @media (max-width: 768px) {
+            .blackhole-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            #gravity-sim {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="blackholes.html" class="active">Black Holes</a>
+            <a href="missions.html">Space Missions</a>
+            <a href="telescope.html">Telescopes</a>
+            <a href="games.html">Learning Games</a>
+            <a href="resources.html">Resources</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="hero">
+            <h1>The Mysterious World of Black Holes</h1>
+            <p>Explore the most enigmatic objects in the universe where gravity is so strong that nothing, not even light, can escape.</p>
+        </div>
+        
+        <!-- Black Hole Types -->
+        <h2>Types of Black Holes</h2>
+        <div class="blackhole-grid">
+            <div class="blackhole-card">
+                <h3>Stellar Black Holes</h3>
+                <img src="images/stellar-bh.jpg" alt="Stellar Black Hole" class="blackhole-image">
+                <p>Formed when massive stars collapse at the end of their life cycle. Typically 5 to 100 times the mass of our Sun.</p>
+                <ul>
+                    <li>Created by supernova explosions</li>
+                    <li>Common throughout galaxies</li>
+                    <li>Strong gravitational pull</li>
+                </ul>
+            </div>
+            
+            <div class="blackhole-card">
+                <h3>Supermassive Black Holes</h3>
+                <img src="images/supermassive-bh.jpg" alt="Supermassive Black Hole" class="blackhole-image">
+                <p>Monsters at the center of galaxies, millions to billions times the Sun's mass. Our Milky Way has Sagittarius A*.</p>
+                <ul>
+                    <li>Found in galactic centers</li>
+                    <li>Power quasars and active galaxies</li>
+                    <li>Formation still mysterious</li>
+                </ul>
+            </div>
+            
+            <div class="blackhole-card">
+                <h3>Intermediate Black Holes</h3>
+                <img src="images/intermediate-bh.jpg" alt="Intermediate Black Hole" class="blackhole-image">
+                <p>The "missing link" between stellar and supermassive black holes, with hundreds to thousands of solar masses.</p>
+                <ul>
+                    <li>Rare and hard to detect</li>
+                    <li>May form through mergers</li>
+                    <li>Important for understanding BH growth</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Gravity Simulation -->
+        <div class="simulation">
+            <h2>Black Hole Gravity Simulator</h2>
+            <p>See how black holes warp spacetime and affect nearby objects</p>
+            <div id="gravity-sim">
+                <!-- Simulation will be inserted here by JavaScript -->
+                <canvas id="blackhole-canvas" width="800" height="400"></canvas>
+            </div>
+            <div class="sim-controls">
+                <button id="reset-sim" class="learn-more">Reset Simulation</button>
+                <button id="add-star" class="learn-more">Add Star</button>
+                <button id="toggle-grid" class="learn-more">Toggle Spacetime Grid</button>
+            </div>
+        </div>
+        
+        <!-- Key Facts -->
+        <h2>Mind-Blowing Black Hole Facts</h2>
+        <div class="facts-container">
+            <div class="fact-card">
+                <h3>Time Dilation</h3>
+                <p>Time runs slower near a black hole due to extreme gravity. An hour near the event horizon could be years elsewhere.</p>
+            </div>
+            
+            <div class="fact-card">
+                <h3>Spaghettification</h3>
+                <p>The tidal forces stretch objects into long, thin shapes like spaghetti as they fall in.</p>
+            </div>
+            
+            <div class="fact-card">
+                <h3>Hawking Radiation</h3>
+                <p>Black holes can slowly evaporate by emitting quantum particles at their event horizons.</p>
+            </div>
+            
+            <div class="fact-card">
+                <h3>First Image</h3>
+                <p>The first black hole image (M87*) was captured in 2019 by the Event Horizon Telescope.</p>
+            </div>
+        </div>
+        
+        <!-- Discovery Timeline -->
+        <h2>Black Hole Discovery Timeline</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <h3>1783: John Michell's "Dark Stars"</h3>
+                <p>First proposed the idea of massive objects whose gravity prevents light from escaping.</p>
+            </div>
+            
+            <div class="timeline-item">
+                <h3>1915: Einstein's General Relativity</h3>
+                <p>Provided the theoretical framework for understanding black holes.</p>
+            </div>
+            
+            <div class="timeline-item">
+                <h3>1964: Cygnus X-1 Discovered</h3>
+                <p>First strong black hole candidate found through X-ray emissions.</p>
+            </div>
+            
+            <div class="timeline-item">
+                <h3>2019: First Black Hole Image</h3>
+                <p>Event Horizon Telescope captured the shadow of M87*'s black hole.</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Space Learning Hub | Black hole data from NASA and ESA</p>
+    </footer>
+
+    <script>
+        // Simple Gravity Simulation
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('blackhole-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas to full width of container
+            canvas.width = document.getElementById('gravity-sim').clientWidth;
+            canvas.height = 400;
+            
+            // Black hole properties
+            const blackHole = {
+                x: canvas.width/2,
+                y: canvas.height/2,
+                mass: 5000,
+                radius: 30
+            };
+            
+            // Stars array
+            let stars = [];
+            
+            // Spacetime grid
+            let showGrid = true;
+            
+            // Create initial stars
+            function createStars(count) {
+                for (let i = 0; i < count; i++) {
+                    stars.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: (Math.random() - 0.5) * 2,
+                        radius: 2 + Math.random() * 3
+                    });
+                }
+            }
+            
+            // Draw spacetime grid
+            function drawGrid() {
+                if (!showGrid) return;
+                
+                ctx.strokeStyle = 'rgba(79, 195, 247, 0.2)';
+                ctx.lineWidth = 1;
+                
+                // Vertical lines
+                for (let x = 0; x < canvas.width; x += 30) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    // Curve line toward black hole
+                    for (let y = 0; y < canvas.height; y += 5) {
+                        const dx = blackHole.x - x;
+                        const dy = blackHole.y - y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        const force = blackHole.mass / (dist*dist);
+                        ctx.lineTo(x + dx * force * 10, y + dy * force * 10);
+                    }
+                    ctx.stroke();
+                }
+                
+                // Horizontal lines
+                for (let y = 0; y < canvas.height; y += 30) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    // Curve line toward black hole
+                    for (let x = 0; x < canvas.width; x += 5) {
+                        const dx = blackHole.x - x;
+                        const dy = blackHole.y - y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        const force = blackHole.mass / (dist*dist);
+                        ctx.lineTo(x + dx * force * 10, y + dy * force * 10);
+                    }
+                    ctx.stroke();
+                }
+            }
+            
+            // Draw black hole
+            function drawBlackHole() {
+                // Event horizon
+                ctx.beginPath();
+                ctx.arc(blackHole.x, blackHole.y, blackHole.radius, 0, Math.PI*2);
+                
+                // Create accretion disk effect
+                const gradient = ctx.createRadialGradient(
+                    blackHole.x, blackHole.y, blackHole.radius,
+                    blackHole.x, blackHole.y, blackHole.radius * 3
+                );
+                gradient.addColorStop(0, '#ff3366');
+                gradient.addColorStop(0.5, '#993366');
+                gradient.addColorStop(1, 'transparent');
+                
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                
+                // Black center
+                ctx.beginPath();
+                ctx.arc(blackHole.x, blackHole.y, blackHole.radius, 0, Math.PI*2);
+                ctx.fillStyle = 'black';
+                ctx.fill();
+            }
+            
+            // Draw stars
+            function drawStars() {
+                ctx.fillStyle = 'white';
+                stars.forEach(star => {
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI*2);
+                    ctx.fill();
+                });
+            }
+            
+            // Update star positions
+            function updateStars() {
+                stars.forEach(star => {
+                    // Calculate gravitational force
+                    const dx = blackHole.x - star.x;
+                    const dy = blackHole.y - star.y;
+                    const distSq = dx*dx + dy*dy;
+                    const dist = Math.sqrt(distSq);
+                    const force = blackHole.mass / distSq;
+                    
+                    // Update velocity
+                    star.vx += dx / dist * force * 0.1;
+                    star.vy += dy / dist * force * 0.1;
+                    
+                    // Update position
+                    star.x += star.vx;
+                    star.y += star.vy;
+                    
+                    // Remove stars that get too close or go off screen
+                    if (dist < blackHole.radius || 
+                        star.x < 0 || star.x > canvas.width || 
+                        star.y < 0 || star.y > canvas.height) {
+                        // Reset star
+                        star.x = Math.random() * canvas.width;
+                        star.y = Math.random() * canvas.height;
+                        star.vx = (Math.random() - 0.5) * 2;
+                        star.vy = (Math.random() - 0.5) * 2;
+                    }
+                });
+            }
+            
+            // Animation loop
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                drawGrid();
+                drawBlackHole();
+                updateStars();
+                drawStars();
+                
+                requestAnimationFrame(animate);
+            }
+            
+            // Initialize
+            createStars(50);
+            animate();
+            
+            // Event listeners for controls
+            document.getElementById('reset-sim').addEventListener('click', function() {
+                stars = [];
+                createStars(50);
+            });
+            
+            document.getElementById('add-star').addEventListener('click', function() {
+                createStars(10);
+            });
+            
+            document.getElementById('toggle-grid').addEventListener('click', function() {
+                showGrid = !showGrid;
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                canvas.width = document.getElementById('gravity-sim').clientWidth;
+                blackHole.x = canvas.width/2;
+                blackHole.y = canvas.height/2;
+            });
+        });
+    </script>
+</body>
+</html>

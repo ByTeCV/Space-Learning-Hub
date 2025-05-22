@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Solar System | Space Learning Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        :root {
+            --space-dark: #0a0a2a;
+            --space-blue: #4fc3f7;
+            --space-purple: #7b1fa2;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--space-dark);
+            color: white;
+            background-image: url('stars-bg.jpg');
+            background-attachment: fixed;
+        }
+        
+        nav {
+            background-color: rgba(10,10,42,0.9);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--space-blue);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        h1, h2 {
+            text-align: center;
+            color: var(--space-blue);
+        }
+        
+        h1 {
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+        
+        /* 3D Viewer Section */
+        #solar-system-viewer {
+            width: 100%;
+            height: 500px;
+            background: #000;
+            border-radius: 10px;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #model-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            padding: 1rem;
+            z-index: 10;
+        }
+        
+        .viewer-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .viewer-controls button {
+            background: var(--space-blue);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        /* Planets Grid */
+        .planets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+        
+        .planet-card {
+            background: rgba(20, 20, 60, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        
+        .planet-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+        
+        .planet-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .planet-info {
+            padding: 1.5rem;
+        }
+        
+        .planet-info h3 {
+            margin-top: 0;
+            color: var(--space-blue);
+        }
+        
+        .planet-info p {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .learn-more {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--space-blue);
+            color: var(--space-dark);
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        
+        .learn-more:hover {
+            background: #81d4fa;
+        }
+        
+        /* Comparison Tool */
+        #comparison-tool {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: rgba(20, 20, 60, 0.7);
+            border-radius: 10px;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .comparison-card {
+            background: rgba(30, 30, 80, 0.5);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        select {
+            padding: 0.5rem;
+            background: var(--space-dark);
+            color: white;
+            border: 1px solid var(--space-blue);
+            border-radius: 5px;
+            margin-right: 1rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(10,10,42,0.9);
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 600px) {
+            .planets-grid, .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            #solar-system-viewer {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="blackholes.html">Black Holes</a>
+            <a href="missions.html">Space Missions</a>
+            <a href="telescope.html">Telescopes</a>
+            <a href="games.html">Learning Games</a>
+            <a href="resources.html">Resources</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <h1>Interactive Solar System Explorer</h1>
+        
+        <!-- 3D Solar System Viewer -->
+        <div id="solar-system-viewer">
+            <div class="viewer-controls">
+                <button id="rotate-toggle">Auto-Rotate: On</button>
+                <button id="reset-view">Reset View</button>
+                <button id="zoom-in">Zoom In</button>
+                <button id="zoom-out">Zoom Out</button>
+            </div>
+            <div id="model-info">
+                <h3 id="current-model">Select a planet to view 3D model</h3>
+                <p id="model-description"></p>
+            </div>
+        </div>
+        
+            <p style="font-size: small; text-align: center; color: red; margin: 0;">Try zooming in or out to get a better view of the planets.</p>
+        
+        <!-- Planets Grid -->
+        <h2>Planets of Our Solar System</h2>
+        <div class="planets-grid">
+            <!-- Mercury -->
+            <div class="planet-card" data-planet="mercury" data-model="models/mercury.glb">
+                <div class="planet-image" style="background-image: url('https://t3.ftcdn.net/jpg/07/12/91/00/240_F_712910048_VdCMypIBngEGysL3PvTAYil6XaL4OPY6.jpg');"></div>
+                <div class="planet-info">
+                    <h3>Mercury</h3>
+                    <p>The smallest planet in our solar system and closest to the Sun.</p>
+                    <a href="planet.html?name=mercury" class="learn-more">Explore Mercury</a>
+                </div>
+            </div>
+            
+            <!-- Venus -->
+            <div class="planet-card" data-planet="venus" data-model="models/venus.glb">
+                <div class="planet-image" style="background-image: url('https://t3.ftcdn.net/jpg/01/62/94/68/240_F_162946860_w66NWYApiLg62qSvq2226RBRh46ryqqk.jpg');"></div>
+                <div class="planet-info">
+                    <h3>Venus</h3>
+                    <p>Similar in size to Earth but with a toxic atmosphere.</p>
+                    <a href="planet.html?name=venus" class="learn-more">Explore Venus</a>
+                </div>
+            </div>
+            
+            <!-- Earth -->
+            <div class="planet-card" data-planet="earth" data-model="models/earth.glb">
+                <div class="planet-image" style="background-image: url('https://t3.ftcdn.net/jpg/01/94/08/00/240_F_194080021_Qqc5gJLp4uNQpSStlbPdbQdeYUXt7PHN.jpg');"></div>
+                <div class="planet-info">
+                    <h3>Earth</h3>
+                    <p>Our home planet, the only known place with life.</p>
+                    <a href="planet.html?name=earth" class="learn-more">Explore Earth</a>
+                </div>
+            </div>
+            
+            <!-- Mars -->
+            <div class="planet-card" data-planet="mars" data-model="models/mars.glb">
+                <div class="planet-image" style="background-image: url('https://t4.ftcdn.net/jpg/03/66/81/05/240_F_366810558_oHtNhQLAHEfLXyV4RYe2X1VgwcUQYfdC.jpg');"></div>
+                <div class="planet-info">
+                    <h3>Mars</h3>
+                    <p>The Red Planet, future target for human exploration.</p>
+                    <a href="planet.html?name=mars" class="learn-more">Explore Mars</a>
+                </div>
+            </div>
+            
+            <!-- Jupiter -->
+            <div class="planet-card" data-planet="jupiter" data-model="models/jupiter.glb">
+                <div class="planet-image" style="background-image: url('https://t4.ftcdn.net/jpg/05/04/79/77/240_F_504797794_e8O89XDIbpyYF3s7ifmWeslIYtnLzUAP.jpg');"></div>
+                <div class="planet-info">
+                    <h3>Jupiter</h3>
+                    <p>The largest planet with a Great Red Spot storm.</p>
+                    <a href="planet.html?name=jupiter" class="learn-more">Explore Jupiter</a>
+                </div>
+            </div>
+            
+            <!-- Saturn -->
+            <div class="planet-card" data-planet="saturn" data-model="models/saturn.glb">
+                <div class="planet-image" style="background-image: url('https://t3.ftcdn.net/jpg/06/30/23/22/240_F_630232299_MpLtrAdSH3IRWP3tARG806KWm6QxIstD.jpg');"></div>
+                <div class="planet-info">
+                    <h3>Saturn</h3>
+                    <p>Famous for its beautiful rings made of ice and rock.</p>
+                    <a href="planet.html?name=saturn" class="learn-more">Explore Saturn</a>
+                </div>
+            </div>
+            
+            <!-- Uranus -->
+            <div class="planet-card" data-planet="uranus" data-model="models/uranus.glb">
+                <div class="planet-image" style="background-image: url('https://t3.ftcdn.net/jpg/02/56/18/26/240_F_256182634_jp3xNSfgDSYf8vyzunvQgLgzSHIb1pra.jpg');"></div>
+                <div class="planet-info">
+                    <h3>Uranus</h3>
+                    <p>An ice giant that rotates on its side.</p>
+                    <a href="planet.html?name=uranus" class="learn-more">Explore Uranus</a>
+                </div>
+            </div>
+            
+            <!-- Neptune -->
+            <div class="planet-card" data-planet="neptune" data-model="models/neptune.glb">
+                <div class="planet-image" style="background-image: url('https://t3.ftcdn.net/jpg/09/23/33/80/240_F_923338027_BnDoC3bQFd4J3iSKCsmJFVvZadJDsTm1.jpg');"></div>
+                <div class="planet-info">
+                    <h3>Neptune</h3>
+                    <p>The windiest planet with supersonic winds.</p>
+                    <a href="planet.html?name=neptune" class="learn-more">Explore Neptune</a>
+                </div>
+            </div>
+            
+            <!-- Pluto -->
+            <div class="planet-card" data-planet="pluto" data-model="models/pluto.glb">
+                <div class="planet-image" style="background-image: url('https://t4.ftcdn.net/jpg/06/22/36/63/240_F_622366362_nXHoh5tZ1aorAGWcJLBhPrH6nfdoDWwN.jpg');"></div>
+                <div class="planet-info">
+                    <h3>Pluto</h3>
+                    <p>A dwarf planet with a heart-shaped glacier.</p>
+                    <a href="planet.html?name=pluto" class="learn-more">Explore Pluto</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Planet Comparison Tool -->
+        <div id="comparison-tool">
+            <h2>Planet Comparison Tool</h2>
+            <div>
+                <select id="compare-planet-1">
+                    <option value="">Select first planet</option>
+                    <!-- Options will be filled by JavaScript -->
+                </select>
+                
+                <select id="compare-planet-2">
+                    <option value="">Select second planet</option>
+                    <!-- Options will be filled by JavaScript -->
+                </select>
+                
+                <button id="compare-btn" class="learn-more">Compare</button>
+            </div>
+            
+            <div class="comparison-grid" id="comparison-results">
+                <!-- Comparison results will appear here -->
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Space Learning Hub | Designed for Students</p>
+        <p>All planet images and models courtesy of NASA</p>
+    </footer>
+
+    <script>
+        // 3D Viewer Implementation
+        let scene, camera, renderer, model, controls;
+        let autoRotate = true;
+        const planetData = {
+            mercury: {
+                name: "Mercury",
+                description: "The smallest planet in our solar system (4,880 km diameter) and closest to the Sun. Surface temperatures range from -173°C to 427°C.",
+                diameter: "4,880 km",
+                distance: "57.9 million km",
+                orbit: "88 Earth days",
+                day: "59 Earth days"
+            },
+            venus: {
+                name: "Venus",
+                description: "Similar in size to Earth (12,104 km diameter) but with a toxic atmosphere of carbon dioxide. Surface temperature averages 462°C.",
+                diameter: "12,104 km",
+                distance: "108.2 million km",
+                orbit: "225 Earth days",
+                day: "243 Earth days"
+            },
+            earth: {
+                name: "Earth",
+                description: "Our home planet (12,742 km diameter), the only known place in the universe confirmed to host life. 70% surface covered by water.",
+                diameter: "12,742 km",
+                distance: "149.6 million km",
+                orbit: "365.25 days",
+                day: "24 hours"
+            },
+            mars: {
+                name: "Mars",
+                description: "The Red Planet (6,779 km diameter) with the largest volcano (Olympus Mons) and canyon (Valles Marineris) in the solar system.",
+                diameter: "6,779 km",
+                distance: "227.9 million km",
+                orbit: "687 Earth days",
+                day: "24.6 hours"
+            },
+            jupiter: {
+                name: "Jupiter",
+                description: "The largest planet (139,820 km diameter) - a gas giant with a Great Red Spot that's a storm bigger than Earth.",
+                diameter: "139,820 km",
+                distance: "778.5 million km",
+                orbit: "12 Earth years",
+                day: "9.9 hours"
+            },
+            saturn: {
+                name: "Saturn",
+                description: "Famous for its beautiful rings made of ice and rock. A gas giant with over 80 moons (116,460 km diameter).",
+                diameter: "116,460 km",
+                distance: "1.4 billion km",
+                orbit: "29.5 Earth years",
+                day: "10.7 hours"
+            },
+            uranus: {
+                name: "Uranus",
+                description: "An ice giant (50,724 km diameter) that rotates on its side. Has 13 rings and 27 known moons.",
+                diameter: "50,724 km",
+                distance: "2.9 billion km",
+                orbit: "84 Earth years",
+                day: "17.2 hours"
+            },
+            neptune: {
+                name: "Neptune",
+                description: "The windiest planet (49,244 km diameter) with the strongest winds in the solar system (2,100 km/h).",
+                diameter: "49,244 km",
+                distance: "4.5 billion km",
+                orbit: "165 Earth years",
+                day: "16.1 hours"
+            },
+            pluto: {
+                name: "Pluto",
+                description: "A dwarf planet (2,377 km diameter) in the Kuiper belt. Smaller than Earth's moon with a heart-shaped glacier.",
+                diameter: "2,377 km",
+                distance: "5.9 billion km",
+                orbit: "248 Earth years",
+                day: "6.4 Earth days"
+            }
+        };
+
+        // Initialize Three.js scene
+        function init3DViewer() {
+            // Create scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+            
+            // Add ambient light
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            scene.add(ambientLight);
+            
+            // Add directional light
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+            
+            // Set up camera
+            camera = new THREE.PerspectiveCamera(75, document.getElementById('solar-system-viewer').clientWidth / document.getElementById('solar-system-viewer').clientHeight, 0.1, 1000);
+            camera.position.z = 5;
+            
+            // Set up renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(document.getElementById('solar-system-viewer').clientWidth, document.getElementById('solar-system-viewer').clientHeight);
+            document.getElementById('solar-system-viewer').prepend(renderer.domElement);
+            
+            // Add orbit controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.25;
+            controls.autoRotate = autoRotate;
+            controls.autoRotateSpeed = 2;
+            
+            // Add stars background
+            addStars();
+            
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize);
+            
+            // Start animation loop
+            animate();
+        }
+        
+        function addStars() {
+            const starsGeometry = new THREE.BufferGeometry();
+            const starsMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.1,
+                transparent: true
+            });
+            
+            const starsVertices = [];
+            for (let i = 0; i < 1000; i++) {
+                const x = (Math.random() - 0.5) * 2000;
+                const y = (Math.random() - 0.5) * 2000;
+                const z = (Math.random() - 0.5) * 2000;
+                starsVertices.push(x, y, z);
+            }
+            
+            starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
+            const stars = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(stars);
+        }
+        
+        function onWindowResize() {
+            camera.aspect = document.getElementById('solar-system-viewer').clientWidth / document.getElementById('solar-system-viewer').clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(document.getElementById('solar-system-viewer').clientWidth, document.getElementById('solar-system-viewer').clientHeight);
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        
+        // Load 3D model
+        function loadModel(modelPath, planetName) {
+            // Remove previous model if exists
+            if (model) {
+                scene.remove(model);
+            }
+
+            const loader = new THREE.GLTFLoader();
+            loader.load(modelPath, function(gltf) {
+                model = gltf.scene;
+
+                // Adjust scale based on planet
+                let scale = 1;
+                if (planetName === 'jupiter') scale = 0.5;
+                if (planetName === 'saturn') scale = 0.6;
+                if (planetName === 'uranus' || planetName === 'neptune') scale = 0.8;
+                if (planetName === 'mars') scale = 0.5;
+
+                model.scale.set(scale, scale, scale);
+                scene.add(model);
+
+                // Update info panel
+                document.getElementById('current-model').textContent = planetData[planetName].name;
+                document.getElementById('model-description').textContent = planetData[planetName].description;
+
+                // Center and zoom to model
+                const box = new THREE.Box3().setFromObject(model);
+                const center = box.getCenter(new THREE.Vector3());
+                const size = box.getSize(new THREE.Vector3());
+                model.position.sub(center); // Center the model
+
+                // Reset camera position
+                camera.position.z = size.length() * 1.5;
+                controls.reset();
+            }, undefined, function(error) {
+                console.error('Error loading model:', error);
+            });
+        }
+        
+        // Initialize comparison tool
+        function initComparisonTool() {
+            const planetSelect1 = document.getElementById('compare-planet-1');
+            const planetSelect2 = document.getElementById('compare-planet-2');
+            
+            // Add options to both select elements
+            for (const planet in planetData) {
+                const option1 = document.createElement('option');
+                option1.value = planet;
+                option1.textContent = planetData[planet].name;
+                
+                const option2 = document.createElement('option');
+                option2.value = planet;
+                option2.textContent = planetData[planet].name;
+                
+                planetSelect1.appendChild(option1);
+                planetSelect2.appendChild(option2.cloneNode(true));
+            }
+            
+            // Handle compare button click
+            document.getElementById('compare-btn').addEventListener('click', function() {
+                const planet1 = planetSelect1.value;
+                const planet2 = planetSelect2.value;
+                
+                if (!planet1 || !planet2) {
+                    alert('Please select two planets to compare');
+                    return;
+                }
+                
+                if (planet1 === planet2) {
+                    alert('Please select two different planets');
+                    return;
+                }
+                
+                displayComparison(planet1, planet2);
+            });
+        }
+        
+        function displayComparison(planet1, planet2) {
+            const resultsDiv = document.getElementById('comparison-results');
+            resultsDiv.innerHTML = '';
+            
+            // Create comparison cards
+            const card1 = createComparisonCard(planet1);
+            const card2 = createComparisonCard(planet2);
+            
+            resultsDiv.appendChild(card1);
+            resultsDiv.appendChild(card2);
+        }
+        
+        function createComparisonCard(planet) {
+            const data = planetData[planet];
+            const card = document.createElement('div');
+            card.className = 'comparison-card';
+            
+            card.innerHTML = `
+                <h3>${data.name}</h3>
+                <p><strong>Diameter:</strong> ${data.diameter}</p>
+                <p><strong>Distance from Sun:</strong> ${data.distance}</p>
+                <p><strong>Orbital Period:</strong> ${data.orbit}</p>
+                <p><strong>Day Length:</strong> ${data.day}</p>
+                <div class="comparison-image" style="height: 150px; background-image: url('${planet}.jpg'); background-size: contain; background-repeat: no-repeat; background-position: center; margin-top: 1rem;"></div>
+            `;
+            
+            return card;
+        }
+        
+        // Initialize page when loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            init3DViewer();
+            initComparisonTool();
+            
+            // Set up planet card clicks
+            const planetCards = document.querySelectorAll('.planet-card');
+            planetCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const planet = this.getAttribute('data-planet');
+                    const modelPath = this.getAttribute('data-model');
+                    loadModel(modelPath, planet);
+                });
+            });
+            
+            // Set up control buttons
+            document.getElementById('rotate-toggle').addEventListener('click', function() {
+                autoRotate = !autoRotate;
+                controls.autoRotate = autoRotate;
+                this.textContent = `Auto-Rotate: ${autoRotate ? 'On' : 'Off'}`;
+            });
+            
+            document.getElementById('reset-view').addEventListener('click', function() {
+                controls.reset();
+            });
+            
+            document.getElementById('zoom-in').addEventListener('click', function() {
+                camera.position.z *= 0.8;
+            });
+            document.getElementById('zoom-out').addEventListener('click', function() {
+                camera.position.z *= 1.25;
+            });
+        });
+    </script>
+</body>
+</html>

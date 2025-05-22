@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planet Profile | Space Learning Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0a0a2a;
+            color: white;
+            background-image: url('images/stars-bg.jpg');
+            background-attachment: fixed;
+        }
+        
+        nav {
+            background-color: rgba(10,10,42,0.9);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        h1 {
+            color: #4fc3f7;
+            text-align: center;
+        }
+        
+        .planet-viewer {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        #model-container {
+            width: 100%;
+            height: 400px;
+            background: black;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .viewer-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .viewer-controls button {
+            background: #4fc3f7;
+            border: none;
+            color: #0a0a2a;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .planet-facts {
+            background: rgba(20, 20, 60, 0.7);
+            padding: 2rem;
+            border-radius: 10px;
+        }
+        
+        .planet-facts h2 {
+            color: #4fc3f7;
+            margin-top: 0;
+        }
+        
+        .planet-facts ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .planet-facts li {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #4fc3f7;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(10,10,42,0.9);
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .planet-viewer {
+                grid-template-columns: 1fr;
+            }
+            
+            #model-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="blackholes.html">Black Holes</a>
+            <a href="missions.html">Space Missions</a>
+            <a href="telescope.html">Telescopes</a>
+            <a href="games.html">Learning Games</a>
+            <a href="resources.html">Resources</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <h1 id="planet-title">Planet Profile</h1>
+        
+        <div class="planet-viewer">
+            <div id="model-container">
+                <div class="viewer-controls">
+                    <button id="rotate-toggle">Auto-Rotate: On</button>
+                    <button id="reset-view">Reset View</button>
+                    <button id="zoom-in">Zoom In</button>
+                    <button id="zoom-out">Zoom Out</button>
+                </div>
+                <!-- Three.js will render here -->
+            </div>
+            
+            <div class="planet-facts">
+                <h2>Key Facts</h2>
+                <ul id="planet-facts">
+                    <!-- Filled by JavaScript -->
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Space Learning Hub</p>
+    </footer>
+
+    <script>const planetData = {
+    mercury: {
+        name: "Mercury",
+        model: "models/mercury.glb",
+        facts: {
+            "Type": "Terrestrial",
+            "Diameter": "4,880 km",
+            "Distance from Sun": "57.9 million km",
+            "Orbital Period": "88 Earth days",
+            "Day Length": "59 Earth days",
+            "Surface Temperature": "-173°C to 427°C",
+            "Moons": "0",
+            "Atmosphere": "Thin exosphere",
+            "Fun Fact": "Smallest planet in our solar system"
+        }
+    },
+    venus: {
+        name: "Venus",
+        model: "models/venus.glb",
+        facts: {
+            "Type": "Terrestrial",
+            "Diameter": "12,104 km",
+            "Distance from Sun": "108.2 million km",
+            "Orbital Period": "225 Earth days",
+            "Day Length": "243 Earth days",
+            "Surface Temperature": "462°C average",
+            "Moons": "0",
+            "Atmosphere": "96.5% CO₂, 3.5% N₂",
+            "Fun Fact": "Hottest planet despite being second from the Sun"
+        }
+    },
+    earth: {
+        name: "Earth",
+        model: "models/earth.glb",
+        facts: {
+            "Type": "Terrestrial",
+            "Diameter": "12,742 km",
+            "Distance from Sun": "149.6 million km",
+            "Orbital Period": "365.25 days",
+            "Day Length": "24 hours",
+            "Surface Temperature": "-89°C to 58°C",
+            "Moons": "1 (Luna)",
+            "Atmosphere": "78% N₂, 21% O₂",
+            "Fun Fact": "Only known planet with liquid water on surface"
+        }
+    },
+    mars: {
+        name: "Mars",
+        model: "models/mars.glb",
+        facts: {
+            "Type": "Terrestrial",
+            "Diameter": "6,779 km",
+            "Distance from Sun": "227.9 million km",
+            "Orbital Period": "687 Earth days",
+            "Day Length": "24.6 hours",
+            "Surface Temperature": "-153°C to 20°C",
+            "Moons": "2 (Phobos & Deimos)",
+            "Atmosphere": "95% CO₂, 3% N₂",
+            "Fun Fact": "Home to Olympus Mons, the largest volcano in solar system"
+        }
+    },
+    jupiter: {
+        name: "Jupiter",
+        model: "models/jupiter.glb",
+        facts: {
+            "Type": "Gas Giant",
+            "Diameter": "139,820 km",
+            "Distance from Sun": "778.5 million km",
+            "Orbital Period": "12 Earth years",
+            "Day Length": "9.9 hours",
+            "Surface Temperature": "-108°C average",
+            "Moons": "95 known (including Europa, Ganymede)",
+            "Atmosphere": "90% H₂, 10% He",
+            "Fun Fact": "Has a storm (Great Red Spot) larger than Earth"
+        }
+    },
+    saturn: {
+        name: "Saturn",
+        model: "models/saturn.glb",
+        facts: {
+            "Type": "Gas Giant",
+            "Diameter": "116,460 km",
+            "Distance from Sun": "1.4 billion km",
+            "Orbital Period": "29.5 Earth years",
+            "Day Length": "10.7 hours",
+            "Surface Temperature": "-139°C average",
+            "Moons": "146 known (including Titan)",
+            "Atmosphere": "96% H₂, 3% He",
+            "Fun Fact": "Rings made mostly of water ice particles"
+        }
+    },
+    uranus: {
+        name: "Uranus",
+        model: "models/uranus.glb",
+        facts: {
+            "Type": "Ice Giant",
+            "Diameter": "50,724 km",
+            "Distance from Sun": "2.9 billion km",
+            "Orbital Period": "84 Earth years",
+            "Day Length": "17.2 hours",
+            "Surface Temperature": "-197°C average",
+            "Moons": "27 known",
+            "Atmosphere": "83% H₂, 15% He, 2% CH₄",
+            "Fun Fact": "Rotates on its side (98° axial tilt)"
+        }
+    },
+    neptune: {
+        name: "Neptune",
+        model: "models/neptune.glb",
+        facts: {
+            "Type": "Ice Giant",
+            "Diameter": "49,244 km",
+            "Distance from Sun": "4.5 billion km",
+            "Orbital Period": "165 Earth years",
+            "Day Length": "16.1 hours",
+            "Surface Temperature": "-201°C average",
+            "Moons": "14 known (including Triton)",
+            "Atmosphere": "80% H₂, 19% He, 1% CH₄",
+            "Fun Fact": "Has the strongest winds in solar system (2,100 km/h)"
+        }
+    },
+    pluto: {
+        name: "Pluto",
+        model: "models/pluto.glb",
+        facts: {
+            "Type": "Dwarf Planet",
+            "Diameter": "2,377 km",
+            "Distance from Sun": "5.9 billion km",
+            "Orbital Period": "248 Earth years",
+            "Day Length": "6.4 Earth days",
+            "Surface Temperature": "-233°C to -223°C",
+            "Moons": "5 (including Charon)",
+            "Atmosphere": "Thin N₂, CH₄, CO",
+            "Fun Fact": "Has a heart-shaped glacier (Tombaugh Regio)"
+        }
+    }
+};
+
+        // Three.js variables
+        let scene, camera, renderer, model, controls;
+        let autoRotate = true;
+
+        // Get planet name from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const planetName = urlParams.get('name');
+
+        // Initialize Three.js scene
+        function init3DViewer() {
+            // Create scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+            
+            // Add lights
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+            
+            // Set up camera
+            camera = new THREE.PerspectiveCamera(
+                75, 
+                document.getElementById('model-container').clientWidth / 
+                document.getElementById('model-container').clientHeight, 
+                0.1, 
+                1000
+            );
+            camera.position.z = 5;
+            
+            // Set up renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(
+                document.getElementById('model-container').clientWidth,
+                document.getElementById('model-container').clientHeight
+            );
+            document.getElementById('model-container').appendChild(renderer.domElement);
+            
+            // Add orbit controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.25;
+            controls.autoRotate = autoRotate;
+            controls.autoRotateSpeed = 2;
+            
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize);
+            
+            // Start animation loop
+            animate();
+        }
+        
+        function onWindowResize() {
+            camera.aspect = document.getElementById('model-container').clientWidth / 
+                           document.getElementById('model-container').clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(
+                document.getElementById('model-container').clientWidth,
+                document.getElementById('model-container').clientHeight
+            );
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        
+        // Load 3D model
+        function loadModel(modelPath) {
+            // Remove previous model if exists
+            if (model) {
+                scene.remove(model);
+            }
+            
+            const loader = new THREE.GLTFLoader();
+            
+            loader.load(
+                modelPath,
+                function(gltf) {
+                    model = gltf.scene;
+                    
+                    // Adjust scale based on planet
+                    let scale = 1;
+                    if (planetName === 'jupiter') scale = 0.5;
+                    if (planetName === 'saturn') scale = 0.6;
+                    if (planetName === 'uranus') scale = 0.8;
+                    if (planetName === 'neptune') scale = 0.0001;
+                    if (planetName === 'mercury') scale = 0.0001;
+                    if (planetName === 'venus') scale = 0.0001;
+
+                    model.scale.set(scale, scale, scale);
+
+                    // Center the model in the scene
+                    const box = new THREE.Box3().setFromObject(model);
+                    const center = box.getCenter(new THREE.Vector3());
+                    model.position.sub(center);
+
+                    scene.add(model);
+                    
+                    // Center and zoom to model
+                    const size = box.getSize(new THREE.Vector3());
+                    
+                    camera.position.z = size.length() * 1.5;
+                    controls.reset();
+                },
+                undefined,
+                function(error) {
+                    console.error('Error loading model:', error);
+                    document.getElementById('model-container').innerHTML = `
+                        <div style="color:white; padding:2rem;">
+                            <h3>Model Could Not Load</h3>
+                            <p>Error loading: ${modelPath}</p>
+                            <p>Check console for details</p>
+                        </div>
+                    `;
+                }
+            );
+        }
+
+        // Load planet data
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!planetName || !planetData[planetName]) {
+                window.location.href = 'planets.html';
+                return;
+            }
+
+            const planet = planetData[planetName];
+            
+            // Set page title
+            document.getElementById('planet-title').textContent = planet.name;
+            document.title = `${planet.name} | Space Learning Hub`;
+            
+            // Initialize 3D viewer
+            init3DViewer();
+            
+            // Load 3D model
+            if (planet.model) {
+                loadModel(planet.model);
+            }
+            
+            // Populate facts
+            const factsList = document.getElementById('planet-facts');
+            for (const [key, value] of Object.entries(planet.facts)) {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>${key}:</strong> ${value}`;
+                factsList.appendChild(li);
+            }
+            
+            // Set up control buttons
+            document.getElementById('rotate-toggle').addEventListener('click', function() {
+                autoRotate = !autoRotate;
+                controls.autoRotate = autoRotate;
+                this.textContent = `Auto-Rotate: ${autoRotate ? 'On' : 'Off'}`;
+            });
+            
+            document.getElementById('reset-view').addEventListener('click', function() {
+                controls.reset();
+            });
+            
+            document.getElementById('zoom-in').addEventListener('click', function() {
+                camera.position.z *= 0.8;
+            });
+            document.getElementById('zoom-out').addEventListener('click', function() {
+                camera.position.z *= 1.25;
+            });
+        });
+    </script>
+</body>
+</html>

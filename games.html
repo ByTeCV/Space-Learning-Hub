@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Learning Games | Space Learning Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="constellation.css">
+    <style>
+        :root {
+            --space-dark: #0a0a2a;
+            --space-blue: #4fc3f7;
+            --space-purple: #7b1fa2;
+            --accent-green: #4CAF50;
+        }
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1b2735 0%, #090a0f 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  nav {
+    width: 100%;
+    background: #111827;
+    padding: 1rem;
+    text-align: center;
+  }
+  nav button {
+    background: #374151;
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  nav button:hover,
+  nav button.active {
+    background: #3b82f6;
+  }
+  main {
+    flex: 1;
+    width: 90vw;
+    max-width: 600px;
+    padding: 1rem;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  #constellation-hint {
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #60a5fa;
+  }
+  #constellation-canvas {
+    background: black;
+    width: 100%;
+    height: 400px;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto;
+    cursor: crosshair;
+  }
+  .controls {
+    margin-top: 1rem;
+    text-align: center;
+  }
+  .controls button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    margin: 0 0.5rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  .controls button:hover {
+    background: #3b82f6;
+  }
+  #result-message {
+    margin-top: 1rem;
+    font-weight: bold;
+    text-align: center;
+  }
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--space-dark);
+            color: white;
+            background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1454789548928-9efd52dc4031?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        
+        nav {
+            background-color: rgba(10,10,42,0.9);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--space-blue);
+        }
+        
+        .nav-links a.active {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        h1, h2 {
+            text-align: center;
+            color: var(--accent-green);
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+            background: rgba(0,0,0,0.7);
+            border-radius: 10px;
+            border: 1px solid var(--accent-green);
+        }
+        
+        /* Games Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .game-card {
+            background: rgba(20, 30, 40, 0.8);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.1);
+            border: 1px solid var(--accent-green);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.3);
+        }
+        
+        .game-card h3 {
+            color: var(--accent-green);
+            margin-top: 0;
+            border-bottom: 1px solid var(--space-blue);
+            padding-bottom: 0.5rem;
+        }
+        
+        .game-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .game-difficulty {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--space-purple);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        /* Game Containers */
+        .game-container {
+            background: rgba(0,0,0,0.7);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 3rem 0;
+            text-align: center;
+        }
+        
+        #quiz-game, #memory-game, #constellation-game {
+            min-height: 400px;
+            position: relative;
+        }
+        
+        .game-screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .game-screen.active {
+            display: block;
+        }
+        
+        /* Quiz Game Styles */
+        .quiz-question {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .quiz-option {
+            background: rgba(79, 195, 247, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quiz-option:hover {
+            background: rgba(79, 195, 247, 0.3);
+        }
+        
+        /* Memory Game Styles */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .memory-card {
+            aspect-ratio: 1;
+            background: var(--space-purple);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+        
+        .memory-card.flipped {
+            transform: rotateY(180deg);
+            background: var(--space-blue);
+        }
+        
+        /* Common Game Elements */
+        .game-score {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            color: var(--accent-green);
+        }
+        
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .game-btn {
+            padding: 0.5rem 1rem;
+            background: var(--accent-green);
+            color: var(--space-dark);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        
+        .game-btn:hover {
+            background: #81c784;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(10,10,42,0.9);
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .memory-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="blackholes.html">Black Holes</a>
+            <a href="missions.html">Space Missions</a>
+            <a href="telescope.html">Telescopes</a>
+            <a href="games.html" class="active">Learning Games</a>
+            <a href="#resources">Resources</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="hero">
+            <h1>Space Learning Games</h1>
+            <p>Test your knowledge and explore the universe through these interactive games!</p>
+        </div>
+        
+        <!-- Games Grid -->
+        <div class="games-grid">
+            <div class="game-card">
+                <span class="game-difficulty">Easy</span>
+                <h3>Space Quiz Challenge</h3>
+                <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Space Quiz" class="game-image">
+                <p>Test your space knowledge with this interactive quiz. 10 questions covering planets, stars, and space exploration.</p>
+                <button class="game-btn" data-game="quiz">Play Now</button>
+            </div>
+            
+            <div class="game-card">
+                <span class="game-difficulty">Medium</span>
+                <h3>Astronomy Memory Match</h3>
+                <img src="https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Memory Game" class="game-image">
+                <p>Match pairs of space objects in this memory game. Find all pairs before time runs out!</p>
+                <button class="game-btn" data-game="memory">Play Now</button>
+            </div>
+            
+            <div class="game-card">
+                <span class="game-difficulty">Hard</span>
+                <h3>Constellation Connect</h3>
+                <img src="https://images.unsplash.com/photo-1465101162946-4377e57745c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Constellation Game" class="game-image">
+                <p>Connect the stars to form famous constellations. Can you recognize them all?</p>
+                <button class="game-btn" data-game="constellation">Play Now</button>
+            </div>
+        </div>
+        
+        <!-- Quiz Game -->
+        <div class="game-container">
+            <h2>Space Quiz Challenge</h2>
+            <div id="quiz-game">
+                <div class="game-screen active" id="quiz-start">
+                    <p>Test your knowledge of space with 10 challenging questions!</p>
+                    <button class="game-btn" id="start-quiz">Start Quiz</button>
+                </div>
+                
+                <div class="game-screen" id="quiz-gameplay">
+                    <div class="quiz-question" id="quiz-question-text">
+                        Question text goes here
+                    </div>
+                    <div class="quiz-options" id="quiz-options">
+                        <!-- Options will be inserted by JavaScript -->
+                    </div>
+                    <div class="game-score" id="quiz-score">
+                        Question 1 of 10
+                    </div>
+                </div>
+                
+                <div class="game-screen" id="quiz-end">
+                    <h3>Quiz Completed!</h3>
+                    <div class="game-score" id="quiz-final-score">
+                        You scored 7 out of 10
+                    </div>
+                    <p id="quiz-feedback">Great job! You know your space facts!</p>
+                    <div class="game-controls">
+                        <button class="game-btn" id="quiz-restart">Play Again</button>
+                        <button class="game-btn" id="quiz-other-games">Other Games</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Memory Game -->
+        <div class="game-container">
+            <h2>Astronomy Memory Match</h2>
+            <div id="memory-game">
+                <div class="game-screen active" id="memory-start">
+                    <p>Find all matching pairs of space objects before time runs out!</p>
+                    <button class="game-btn" id="start-memory">Start Game</button>
+                </div>
+                
+                <div class="game-screen" id="memory-gameplay">
+                    <div class="game-score" id="memory-stats">
+                        Pairs found: 0/8 | Time: 60s
+                    </div>
+                    <div class="memory-grid" id="memory-cards">
+                        <!-- Cards will be inserted by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="game-screen" id="memory-end">
+                    <h3>Game Over!</h3>
+                    <div class="game-score" id="memory-final-score">
+                        You found all 8 pairs in 45 seconds!
+                    </div>
+                    <div class="game-controls">
+                        <button class="game-btn" id="memory-restart">Play Again</button>
+                        <button class="game-btn" id="memory-other-games">Other Games</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Constellation Game (modularized) -->
+        <div class="game-container" id="constellation-game">
+            <h2>Constellation Connect</h2>
+            <nav>
+                <button id="btn-start" class="active">Start Game</button>
+                <button id="btn-check" disabled>Check Answer</button>
+                <button id="btn-skip" disabled>Skip</button>
+            </nav>
+            <main>
+                <h1>Constellation Connect</h1>
+                <div id="constellation-hint">Click stars in order to connect the constellation.</div>
+                <canvas id="constellation-canvas" width="600" height="400" aria-label="Constellation drawing canvas"></canvas>
+                <div class="controls">
+                    <button id="btn-reset" disabled>Reset Drawing</button>
+                </div>
+                <div id="result-message"></div>
+            </main>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Space Learning Hub | Educational Games for Space Enthusiasts</p>
+    </footer>
+
+    <script>
+        // Quiz Game Data
+        const quizQuestions = [
+            {
+                question: "Which planet is known as the Red Planet?",
+                options: ["Venus", "Mars", "Jupiter", "Saturn"],
+                answer: 1
+            },
+            {
+                question: "What is the name of our galaxy?",
+                options: ["Andromeda", "Milky Way", "Sombrero", "Whirlpool"],
+                answer: 1
+            },
+            {
+                question: "Which of these is NOT a type of telescope?",
+                options: ["Refractor", "Reflector", "Deflector", "Compound"],
+                answer: 2
+            },
+            {
+                question: "What year did humans first land on the Moon?",
+                options: ["1965", "1969", "1972", "1975"],
+                answer: 1
+            },
+            {
+                question: "Which of these elements is most abundant in the Sun?",
+                options: ["Oxygen", "Carbon", "Hydrogen", "Helium"],
+                answer: 2
+            },
+            {
+                question: "What is the name of the closest star system to our Sun?",
+                options: ["Sirius", "Alpha Centauri", "Proxima Centauri", "Barnard's Star"],
+                answer: 1
+            },
+            {
+                question: "Which planet has the most moons in our solar system?",
+                options: ["Jupiter", "Saturn", "Uranus", "Neptune"],
+                answer: 1
+            },
+            {
+                question: "What is a light-year a measure of?",
+                options: ["Time", "Distance", "Brightness", "Energy"],
+                answer: 1
+            },
+            {
+                question: "Which spacecraft has traveled farthest from Earth?",
+                options: ["Voyager 1", "Pioneer 10", "New Horizons", "Voyager 2"],
+                answer: 0
+            },
+            {
+                question: "What is the event horizon of a black hole?",
+                options: [
+                    "The point of maximum gravity",
+                    "The boundary where light cannot escape",
+                    "The center of the black hole",
+                    "The visible surface"
+                ],
+                answer: 1
+            }
+        ];
+
+        // Memory Game Data
+        const memoryCards = [
+            "🌍", "🌕", "🪐", "☄️", "🌟", "🚀", "👨‍🚀", "🔭",
+            "🌍", "🌕", "🪐", "☄️", "🌟", "🚀", "👨‍🚀", "🔭"
+        ];
+
+        // Game Management
+        function setupGameButtons() {
+            document.querySelectorAll('.game-btn[data-game]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const game = this.getAttribute('data-game');
+                    document.querySelectorAll('.game-container').forEach(container => {
+                        container.style.display = 'none';
+                    });
+                    document.getElementById(`${game}-game`).closest('.game-container').style.display = 'block';
+                });
+            });
+        }
+
+        // Quiz Game Implementation
+        let currentQuestion = 0;
+        let quizScore = 0;
+        
+        function setupQuizGame() {
+            document.getElementById('start-quiz').addEventListener('click', startQuiz);
+            document.getElementById('quiz-restart').addEventListener('click', startQuiz);
+            document.getElementById('quiz-other-games').addEventListener('click', showAllGames);
+        }
+        
+        function startQuiz() {
+            currentQuestion = 0;
+            quizScore = 0;
+            showQuestion();
+            showScreen('quiz-gameplay');
+        }
+        
+        function showQuestion() {
+            const question = quizQuestions[currentQuestion];
+            document.getElementById('quiz-question-text').textContent = question.question;
+            document.getElementById('quiz-score').textContent = `Question ${currentQuestion + 1} of ${quizQuestions.length}`;
+            
+            const optionsDiv = document.getElementById('quiz-options');
+            optionsDiv.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'quiz-option';
+                optionDiv.textContent = option;
+                optionDiv.addEventListener('click', () => selectAnswer(index));
+                optionsDiv.appendChild(optionDiv);
+            });
+        }
+        
+        function selectAnswer(selectedIndex) {
+            const question = quizQuestions[currentQuestion];
+            if (selectedIndex === question.answer) {
+                quizScore++;
+            }
+            
+            currentQuestion++;
+            if (currentQuestion < quizQuestions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+        
+        function endQuiz() {
+            document.getElementById('quiz-final-score').textContent = 
+                `You scored ${quizScore} out of ${quizQuestions.length}`;
+                
+            let feedback = "";
+            if (quizScore === quizQuestions.length) {
+                feedback = "Perfect! You're a space expert!";
+            } else if (quizScore >= quizQuestions.length * 0.7) {
+                feedback = "Great job! You know your space facts!";
+            } else if (quizScore >= quizQuestions.length * 0.4) {
+                feedback = "Good try! Keep learning about space!";
+            } else {
+                feedback = "Nice try! Explore our site to learn more!";
+            }
+            
+            document.getElementById('quiz-feedback').textContent = feedback;
+            showScreen('quiz-end');
+        }
+        
+        // Memory Game Implementation
+        let memoryPairsFound = 0;
+        let memoryTimeLeft = 60;
+        let memoryTimer;
+        let flippedCards = [];
+        let memoryMatches = 0;
+        
+        function setupMemoryGame() {
+            document.getElementById('start-memory').addEventListener('click', startMemoryGame);
+            document.getElementById('memory-restart').addEventListener('click', startMemoryGame);
+            document.getElementById('memory-other-games').addEventListener('click', showAllGames);
+        }
+        
+        function startMemoryGame() {
+            memoryPairsFound = 0;
+            memoryTimeLeft = 60;
+            memoryMatches = 0;
+            flippedCards = [];
+            
+            clearInterval(memoryTimer);
+            memoryTimer = setInterval(updateMemoryTimer, 1000);
+            
+            document.getElementById('memory-stats').textContent = 
+                `Pairs found: 0/${memoryCards.length/2} | Time: 60s`;
+                
+            const cardsContainer = document.getElementById('memory-cards');
+            cardsContainer.innerHTML = '';
+            
+            // Shuffle cards
+            const shuffledCards = [...memoryCards].sort(() => Math.random() - 0.5);
+            
+            shuffledCards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'memory-card';
+                cardElement.dataset.index = index;
+                cardElement.dataset.value = card;
+                cardElement.addEventListener('click', flipCard);
+                cardsContainer.appendChild(cardElement);
+            });
+            
+            showScreen('memory-gameplay');
+        }
+        
+        function flipCard() {
+            // Don't allow flipping if already flipped or if two cards are already flipped
+            if (this.classList.contains('flipped') || flippedCards.length >= 2) {
+                return;
+            }
+            
+            this.classList.add('flipped');
+            this.textContent = this.dataset.value;
+            flippedCards.push(this);
+            
+            if (flippedCards.length === 2) {
+                checkForMatch();
+            }
+        }
+        
+        function checkForMatch() {
+            const [card1, card2] = flippedCards;
+            
+            if (card1.dataset.value === card2.dataset.value) {
+                // Match found
+                memoryMatches++;
+                memoryPairsFound = memoryMatches;
+                document.getElementById('memory-stats').textContent = 
+                    `Pairs found: ${memoryPairsFound}/${memoryCards.length/2} | Time: ${memoryTimeLeft}s`;
+                
+                flippedCards = [];
+                
+                // Check if all pairs found
+                if (memoryPairsFound === memoryCards.length/2) {
+                    clearInterval(memoryTimer);
+                    setTimeout(endMemoryGame, 500);
+                }
+            } else {
+                // No match
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    card1.textContent = '';
+                    card2.textContent = '';
+                    flippedCards = [];
+                }, 1000);
+            }
+        }
+        
+        function updateMemoryTimer() {
+            memoryTimeLeft--;
+            document.getElementById('memory-stats').textContent = 
+                `Pairs found: ${memoryPairsFound}/${memoryCards.length/2} | Time: ${memoryTimeLeft}s`;
+                
+            if (memoryTimeLeft <= 0) {
+                clearInterval(memoryTimer);
+                endMemoryGame();
+            }
+        }
+        
+        function endMemoryGame() {
+            clearInterval(memoryTimer);
+            document.getElementById('memory-final-score').textContent = 
+                `You found ${memoryPairsFound} out of ${memoryCards.length/2} pairs in ${60 - memoryTimeLeft} seconds!`;
+            showScreen('memory-end');
+        }
+        
+        // Common Functions
+        function showScreen(screenId) {
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+        
+        function showAllGames() {
+            document.querySelectorAll('.game-container').forEach(container => {
+                container.style.display = 'block';
+            });
+        }
+        
+        // Initialize all games when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            setupGameButtons();
+            setupQuizGame();
+            setupMemoryGame();
+            // constellation.js will handle its own initialization
+        });
+    </script>
+    <script src="constellation.js"></script>
+</body>
+</html>

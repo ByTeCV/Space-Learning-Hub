@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telescopes | Space Learning Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --space-dark: #0a0a2a;
+            --space-blue: #4fc3f7;
+            --space-purple: #7b1fa2;
+            --accent-gold: #FFD700;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--space-dark);
+            color: white;
+            background-image: url('images/telescope-bg.jpg');
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        
+        nav {
+            background-color: rgba(10,10,42,0.9);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--space-blue);
+        }
+        
+        .nav-links a.active {
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        h1, h2 {
+            text-align: center;
+            color: var(--accent-gold);
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+            background: rgba(0,0,0,0.7);
+            border-radius: 10px;
+            border: 1px solid var(--accent-gold);
+        }
+        
+        /* Telescope Types */
+        .telescope-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .telescope-card {
+            background: rgba(20, 20, 40, 0.8);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+            box-shadow: 0 0 20px rgba(79, 195, 247, 0.1);
+            border: 1px solid var(--space-blue);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .telescope-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 30px rgba(79, 195, 247, 0.3);
+        }
+        
+        .telescope-card h3 {
+            color: var(--accent-gold);
+            margin-top: 0;
+            border-bottom: 1px solid var(--space-blue);
+            padding-bottom: 0.5rem;
+        }
+        
+        .telescope-image {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin: 1rem 0;
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .telescope-specs {
+            font-size: 0.9rem;
+            margin: 1rem 0;
+        }
+        
+        .telescope-specs span {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Comparison Tool */
+        .comparison-tool {
+            background: rgba(0,0,0,0.7);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 3rem 0;
+        }
+        
+        .comparison-controls {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        select {
+            padding: 0.5rem 1rem;
+            background: var(--space-dark);
+            color: white;
+            border: 1px solid var(--space-blue);
+            border-radius: 4px;
+            min-width: 200px;
+        }
+        
+        .comparison-results {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .comparison-card {
+            background: rgba(20, 20, 40, 0.8);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+        
+        /* Observing Guide */
+        .observing-guide {
+            background: rgba(0,0,0,0.7);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 3rem 0;
+        }
+        
+        .guide-item {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+        
+        .guide-icon {
+            font-size: 2rem;
+            color: var(--accent-gold);
+            min-width: 50px;
+            text-align: center;
+        }
+        
+        /* Interactive Demo */
+        .interactive-demo {
+            background: rgba(0,0,0,0.7);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 3rem 0;
+            text-align: center;
+        }
+        
+        #telescope-demo {
+            width: 100%;
+            height: 400px;
+            background: black;
+            border-radius: 8px;
+            margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .demo-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(10,10,42,0.9);
+            margin-top: 3rem;
+        }
+        
+        /* Button Styles */
+        .learn-more {
+            display: inline-block;
+            padding: 0.5rem 1.1rem;
+            background: transparent;
+            color: var(--accent-gold);
+            border: 2px solid var(--accent-gold);
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            box-shadow: none;
+            transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+            margin-top: 1rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        
+        .learn-more:hover, .learn-more:focus {
+            background: var(--accent-gold);
+            color: #0a0a2a;
+            border-color: #fff;
+            transform: translateY(-2px) scale(1.04);
+            outline: none;
+        }
+        
+        @media (max-width: 768px) {
+            .telescope-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-results {
+                grid-template-columns: 1fr;
+            }
+            
+            .guide-item {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="blackholes.html">Black Holes</a>
+            <a href="missions.html">Space Missions</a>
+            <a href="telescope.html" class="active">Telescopes</a>
+            <a href="games.html">Learning Games</a>
+            <a href="resources.html">Resources</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="hero">
+            <h1>Exploring the Universe Through Telescopes</h1>
+            <p>Discover how telescopes work, compare different types, and learn how to start your astronomical observations.</p>
+        </div>
+        
+        <!-- Telescope Types -->
+        <h2>Types of Telescopes</h2>
+        <div class="telescope-grid">
+            <div class="telescope-card">
+                <h3>Refractor Telescopes</h3>
+                <img src="images/refractor.jpg" alt="Refractor Telescope" class="telescope-image">
+                <div class="telescope-specs">
+                    <span><strong>Optics:</strong> Lenses</span>
+                    <span><strong>Best for:</strong> Planets, Moon, binary stars</span>
+                    <span><strong>Pros:</strong> Sharp images, low maintenance</span>
+                    <span><strong>Cons:</strong> Expensive per inch, chromatic aberration</span>
+                </div>
+                <p>Uses a large objective lens to gather light. Excellent for lunar and planetary viewing with high contrast images.</p>
+                <button class="learn-more">View Examples</button>
+            </div>
+            
+            <div class="telescope-card">
+                <h3>Reflector Telescopes</h3>
+                <img src="images/reflector.jpg" alt="Reflector Telescope" class="telescope-image">
+                <div class="telescope-specs">
+                    <span><strong>Optics:</strong> Mirrors</span>
+                    <span><strong>Best for:</strong> Deep sky objects, galaxies</span>
+                    <span><strong>Pros:</strong> Affordable large apertures</span>
+                    <span><strong>Cons:</strong> Requires collimation</span>
+                </div>
+                <p>Uses a curved primary mirror to gather light. Offers the most aperture per dollar for viewing faint deep space objects.</p>
+                <button class="learn-more">View Examples</button>
+            </div>
+            
+            <div class="telescope-card">
+                <h3>Compound Telescopes</h3>
+                <img src="images/compound.jpg" alt="Compound Telescope" class="telescope-image">
+                <div class="telescope-specs">
+                    <span><strong>Optics:</strong> Lenses + Mirrors</span>
+                    <span><strong>Best for:</strong> All-around use</span>
+                    <span><strong>Pros:</strong> Compact, versatile</span>
+                    <span><strong>Cons:</strong> More expensive</span>
+                </div>
+                <p>Combines lenses and mirrors to fold the optical path. Offers excellent performance in a portable package.</p>
+                <button class="learn-more">View Examples</button>
+            </div>
+        </div>
+
+        <!-- Famous Telescopes Section -->
+        <h2>Famous Telescopes in History</h2>
+        <div class="telescope-grid">
+            <div class="telescope-card">
+                <h3>Hubble Space Telescope</h3>
+                <img src="images/jwst-2.jpg" alt="Hubble Space Telescope" class="telescope-image">
+                <div class="telescope-specs">
+                    <span><strong>Type:</strong> Space-based Reflector</span>
+                    <span><strong>Launched:</strong> 1990</span>
+                    <span><strong>Operator:</strong> NASA/ESA</span>
+                </div>
+                <p>Hubble has revolutionized astronomy with deep space images, helping determine the age of the universe and discovering exoplanets, galaxies, and nebulae.</p>
+            </div>
+            <div class="telescope-card">
+                <h3>James Webb Space Telescope</h3>
+                <img src="images/jwst.jpg" alt="James Webb Space Telescope" class="telescope-image">
+                <div class="telescope-specs">
+                    <span><strong>Type:</strong> Infrared Space Telescope</span>
+                    <span><strong>Launched:</strong> 2021</span>
+                    <span><strong>Operator:</strong> NASA/ESA/CSA</span>
+                </div>
+                <p>JWST is the most powerful space telescope ever built, observing the universe in infrared and peering back to the first galaxies after the Big Bang.</p>
+            </div>
+            <div class="telescope-card">
+                <h3>Very Large Telescope (VLT)</h3>
+                <img src="images/vlt.jpg" alt="Very Large Telescope" class="telescope-image">
+                <div class="telescope-specs">
+                    <span><strong>Type:</strong> Ground-based Reflector</span>
+                    <span><strong>Location:</strong> Chile (Atacama Desert)</span>
+                    <span><strong>Operator:</strong> European Southern Observatory</span>
+                </div>
+                <p>The VLT consists of four 8.2m telescopes that can work together as an interferometer, producing images with extremely high resolution.</p>
+            </div>
+        </div>
+
+        <!-- How Telescopes Work Section -->
+        <div class="observing-guide">
+            <h2>How Do Telescopes Work?</h2>
+            <div class="guide-item">
+                <div class="guide-icon"><i class="fas fa-search"></i></div>
+                <div>
+                    <h3>Light Gathering</h3>
+                    <p>Telescopes collect more light than the human eye, making faint objects visible. The larger the aperture, the more light it gathers.</p>
+                </div>
+            </div>
+            <div class="guide-item">
+                <div class="guide-icon"><i class="fas fa-expand-arrows-alt"></i></div>
+                <div>
+                    <h3>Magnification</h3>
+                    <p>Eyepieces magnify the image formed by the telescope's optics. High magnification is useful for planets, while low magnification is better for deep sky objects.</p>
+                </div>
+            </div>
+            <div class="guide-item">
+                <div class="guide-icon"><i class="fas fa-eye"></i></div>
+                <div>
+                    <h3>Resolution</h3>
+                    <p>Resolution is the ability to see fine detail. Larger telescopes can resolve smaller features on planets, the Moon, and distant stars.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fun Facts Section -->
+        <div class="observing-guide">
+            <h2>Fun Facts About Telescopes</h2>
+            <ul style="max-width:700px;margin:0 auto;text-align:left;line-height:1.7;">
+                <li><strong>Galileo</strong> was the first to use a telescope for astronomy in 1609, discovering Jupiter's moons and Saturn's rings.</li>
+                <li>The <strong>largest optical telescope</strong> in the world is the Gran Telescopio Canarias in Spain, with a 10.4-meter mirror.</li>
+                <li>Radio telescopes like the <strong>FAST</strong> in China can detect signals from billions of light years away.</li>
+                <li>Space telescopes avoid atmospheric distortion, giving clearer images than ground-based telescopes.</li>
+                <li>Modern telescopes use adaptive optics to correct for Earth's atmospheric turbulence in real time.</li>
+            </ul>
+        </div>
+        
+        <!-- Observing Guide -->
+        <div class="observing-guide">
+            <h2>Beginner's Observing Guide</h2>
+            
+            <div class="guide-item">
+                <div class="guide-icon">
+                    <i class="fas fa-moon"></i>
+                </div>
+                <div>
+                    <h3>Start with the Moon</h3>
+                    <p>The Moon is the easiest and most rewarding target for beginners. Observe its craters and mountains when it's not full.</p>
+                </div>
+            </div>
+            
+            <div class="guide-item">
+                <div class="guide-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div>
+                    <h3>Learn the Bright Planets</h3>
+                    <p>Venus, Jupiter (with its moons), and Saturn (with its rings) are visible even with small telescopes.</p>
+                </div>
+            </div>
+            
+            <div class="guide-item">
+                <div class="guide-icon">
+                    <i class="fas fa-cloud-moon"></i>
+                </div>
+                <div>
+                    <h3>Dark Sky Locations</h3>
+                    <p>Light pollution greatly affects what you can see. Find dark sites using light pollution maps.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Space Learning Hub | Telescope data from NASA and major observatories</p>
+    </footer>
+
+    <script>
+        // Telescope Comparison Data
+        const telescopeData = {
+            refractor: {
+                name: "80mm Refractor",
+                type: "Refractor",
+                aperture: "80mm",
+                focalLength: "900mm",
+                fRatio: "f/11",
+                bestFor: ["Moon", "Planets", "Double stars"],
+                weight: "5kg",
+                price: "$300-$600",
+                image: "images/refractor.jpg",
+                description: "Excellent for lunar and planetary viewing with high contrast images. Low maintenance but heavier per inch of aperture."
+            },
+            reflector: {
+                name: "6\" Newtonian Reflector",
+                type: "Reflector",
+                aperture: "150mm",
+                focalLength: "1200mm",
+                fRatio: "f/8",
+                bestFor: ["Deep sky objects", "Galaxies", "Nebulae"],
+                weight: "8kg",
+                price: "$250-$500",
+                image: "images/reflector.jpg",
+                description: "Great for deep space objects. Offers more aperture per dollar but requires occasional collimation."
+            },
+            compound: {
+                name: "8\" Schmidt-Cassegrain",
+                type: "Compound",
+                aperture: "200mm",
+                focalLength: "2000mm",
+                fRatio: "f/10",
+                bestFor: ["All-around use", "Planetary", "Deep sky"],
+                weight: "12kg",
+                price: "$1000-$2000",
+                image: "images/compound.jpg",
+                description: "Versatile telescope that's good for both planetary and deep space observation. Compact design."
+            },
+            dobsonian: {
+                name: "10\" Dobsonian",
+                type: "Reflector",
+                aperture: "254mm",
+                focalLength: "1200mm",
+                fRatio: "f/4.7",
+                bestFor: ["Deep sky objects", "Faint galaxies", "Nebulae"],
+                weight: "20kg",
+                price: "$500-$800",
+                image: "images/dobsonian.jpg",
+                description: "Large aperture at an affordable price. Excellent light gathering but bulky to transport."
+            }
+        };
+
+        // Comparison Tool Functionality
+        document.getElementById('compare-btn').addEventListener('click', function() {
+            const scope1 = document.getElementById('telescope1').value;
+            const scope2 = document.getElementById('telescope2').value;
+            
+            if (!scope1 || !scope2) {
+                alert("Please select two telescopes to compare");
+                return;
+            }
+            
+            if (scope1 === scope2) {
+                alert("Please select two different telescopes");
+                return;
+            }
+            
+            const resultsDiv = document.getElementById('comparison-results');
+            resultsDiv.innerHTML = `
+                <div class="comparison-card">
+                    <h3>${telescopeData[scope1].name}</h3>
+                    <img src="${telescopeData[scope1].image}" style="width:100%; height:150px; object-fit:contain; margin:1rem 0;">
+                    <p><strong>Type:</strong> ${telescopeData[scope1].type}</p>
+                    <p><strong>Aperture:</strong> ${telescopeData[scope1].aperture}</p>
+                    <p><strong>Focal Length:</strong> ${telescopeData[scope1].focalLength}</p>
+                    <p><strong>Best for:</strong> ${telescopeData[scope1].bestFor.join(", ")}</p>
+                    <p><strong>Weight:</strong> ${telescopeData[scope1].weight}</p>
+                    <p><strong>Price Range:</strong> ${telescopeData[scope1].price}</p>
+                </div>
+                <div class="comparison-card">
+                    <h3>${telescopeData[scope2].name}</h3>
+                    <img src="${telescopeData[scope2].image}" style="width:100%; height:150px; object-fit:contain; margin:1rem 0;">
+                    <p><strong>Type:</strong> ${telescopeData[scope2].type}</p>
+                    <p><strong>Aperture:</strong> ${telescopeData[scope2].aperture}</p>
+                    <p><strong>Focal Length:</strong> ${telescopeData[scope2].focalLength}</p>
+                    <p><strong>Best for:</strong> ${telescopeData[scope2].bestFor.join(", ")}</p>
+                    <p><strong>Weight:</strong> ${telescopeData[scope2].weight}</p>
+                    <p><strong>Price Range:</strong> ${telescopeData[scope2].price}</p>
+                </div>
+            `;
+        });
+
+        // Telescope Simulator
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('telescope-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas to full width of container
+            canvas.width = document.getElementById('telescope-demo').clientWidth;
+            canvas.height = 400;
+            
+            // Image assets
+            const images = {
+                moon: new Image(),
+                jupiter: new Image(),
+                saturn: new Image(),
+                nebula: new Image()
+            };
+            
+            // Load images
+            images.moon.src = 'images/moon.jpg';
+            images.jupiter.src = 'images/jupiter.jpg';
+            images.saturn.src = 'images/saturn.jpg';
+            images.nebula.src = 'images/orion-nebula.jpg';
+            
+            // Current view
+            let currentTarget = 'moon';
+            let currentScope = 'refractor';
+            let currentMagnification = 1;
+            
+            // Draw function
+            function drawView() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw the target image with telescope effects
+                if (images[currentTarget].complete) {
+                    // Apply different effects based on telescope type
+                    switch(currentScope) {
+                        case 'refractor':
+                            // Refractor - sharp with some chromatic aberration
+                            ctx.drawImage(images[currentTarget], 0, 0, canvas.width, canvas.height);
+                            
+                            // Add chromatic aberration effect
+                            if (currentMagnification > 2) {
+                                ctx.fillStyle = 'rgba(0, 0, 255, 0.05)';
+                                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                                ctx.drawImage(images[currentTarget], 1, 0, canvas.width, canvas.height);
+                                ctx.fillStyle = 'rgba(255, 0, 0, 0.05)';
+                                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                                ctx.drawImage(images[currentTarget], -1, 0, canvas.width, canvas.height);
+                            }
+                            break;
+                            
+                        case 'reflector':
+                            // Reflector - slightly less contrast
+                            ctx.filter = 'contrast(0.9) brightness(1.1)';
+                            ctx.drawImage(images[currentTarget], 0, 0, canvas.width, canvas.height);
+                            ctx.filter = 'none';
+                            
+                            // Add diffraction spikes for stars
+                            if (currentTarget === 'nebula') {
+                                // This would be more complex in a real implementation
+                                ctx.fillStyle = 'white';
+                                for (let i = 0; i < 4; i++) {
+                                    ctx.fillRect(canvas.width/2 - 1 + i*3, canvas.height/2 - 50, 2, 100);
+                                    ctx.fillRect(canvas.width/2 - 50, canvas.height/2 - 1 + i*3, 100, 2);
+                                }
+                            }
+                            break;
+                            
+                        case 'compound':
+                            // Compound - balanced view
+                            ctx.drawImage(images[currentTarget], 0, 0, canvas.width, canvas.height);
+                            break;
+                    }
+                    
+                    // Apply magnification (simplified)
+                    if (currentMagnification > 1) {
+                        const magFactor = currentMagnification;
+                        const srcWidth = canvas.width / magFactor;
+                        const srcHeight = canvas.height / magFactor;
+                        const srcX = (canvas.width - srcWidth) / 2;
+                        const srcY = (canvas.height - srcHeight) / 2;
+                        
+                        const tempCanvas = document.createElement('canvas');
+                        tempCanvas.width = canvas.width;
+                        tempCanvas.height = canvas.height;
+                        const tempCtx = tempCanvas.getContext('2d');
+                        tempCtx.drawImage(canvas, 0, 0);
+                        
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(tempCanvas, srcX, srcY, srcWidth, srcHeight, 0, 0, canvas.width, canvas.height);
+                    }
+                    
+                    // Add grain/noise at higher magnifications
+                    if (currentMagnification > 3) {
+                        ctx.fillStyle = 'rgba(0,0,0,0.03)';
+                        for (let i = 0; i < 500; i++) {
+                            ctx.fillRect(
+                                Math.random() * canvas.width,
+                                Math.random() * canvas.height,
+                                1, 1
+                            );
+                        }
+                    }
+                }
+            }
+            
+            // Event listeners for controls
+            document.getElementById('demo-scope').addEventListener('change', function() {
+                currentScope = this.value;
+                drawView();
+            });
+            
+            document.getElementById('demo-target').addEventListener('change', function() {
+                currentTarget = this.value;
+                drawView();
+            });
+            
+            document.getElementById('demo-magnification').addEventListener('input', function() {
+                currentMagnification = parseFloat(this.value);
+                document.getElementById('magnification-value').textContent = 
+                    Math.round(50 * currentMagnification) + "x";
+                drawView();
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                canvas.width = document.getElementById('telescope-demo').clientWidth;
+                drawView();
+            });
+            
+            // Initial draw
+            drawView();
+        });
+    </script>
+</body>
+</html>

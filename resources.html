@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Resources | Space Learning Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --space-dark: #0a0a2a;
+            --space-blue: #4fc3f7;
+            --space-purple: #7b1fa2;
+            --accent-green: #4CAF50;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--space-dark);
+            color: white;
+            background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        
+        nav {
+            background-color: rgba(10,10,42,0.9);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--space-blue);
+        }
+        
+        .nav-links a.active {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        h1, h2, h3 {
+            color: var(--accent-green);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        h2 {
+            border-bottom: 2px solid var(--space-blue);
+            padding-bottom: 0.5rem;
+            margin-top: 3rem;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+            background: rgba(0,0,0,0.7);
+            border-radius: 10px;
+            border: 1px solid var(--accent-green);
+        }
+        
+        /* Resource Cards */
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .resource-card {
+            background: rgba(20, 30, 40, 0.8);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.1);
+            border: 1px solid var(--accent-green);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.3);
+        }
+        
+        .resource-card h3 {
+            margin-top: 0;
+            color: var(--space-blue);
+        }
+        
+        .resource-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .resource-type {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--space-purple);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .resource-link {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--accent-green);
+            color: var(--space-dark);
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        
+        .resource-link:hover {
+            background: #81c784;
+        }
+        
+        /* Organization List */
+        .org-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .org-item {
+            background: rgba(20, 30, 40, 0.6);
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--space-blue);
+        }
+        
+        .org-item h3 {
+            margin-top: 0;
+        }
+        
+        .org-link {
+            color: var(--space-blue);
+            text-decoration: none;
+        }
+        
+        .org-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Newsletter Form */
+        .newsletter {
+            background: rgba(0,0,0,0.7);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 3rem 0;
+            text-align: center;
+            border: 1px solid var(--space-blue);
+        }
+        
+        .newsletter-form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .newsletter-input {
+            padding: 0.75rem;
+            border-radius: 4px;
+            border: none;
+            min-width: 250px;
+            flex-grow: 1;
+        }
+        
+        .newsletter-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--accent-green);
+            color: var(--space-dark);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        
+        .newsletter-btn:hover {
+            background: #81c784;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(10,10,42,0.9);
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .resource-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .newsletter-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="blackholes.html">Black Holes</a>
+            <a href="space-missions.html">Space Missions</a>
+            <a href="telescopes.html">Telescopes</a>
+            <a href="games.html">Learning Games</a>
+            <a href="resources.html" class="active">Resources</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="hero">
+            <h1>Space Learning Resources</h1>
+            <p>Explore our curated collection of books, websites, videos, and organizations to continue your space education journey.</p>
+        </div>
+        
+        <!-- Recommended Books -->
+        <h2>Recommended Books</h2>
+        <div class="resource-grid">
+            <div class="resource-card">
+                <span class="resource-type">Book</span>
+                <h3>A Brief History of Time</h3>
+                <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="A Brief History of Time" class="resource-image">
+                <p>Stephen Hawking's landmark book explains complex cosmological ideas for general readers.</p>
+                <a href="https://www.hawking.org.uk/a-brief-history-of-time" class="resource-link" target="_blank">Learn More</a>
+            </div>
+            
+            <div class="resource-card">
+                <span class="resource-type">Book</span>
+                <h3>Cosmos</h3>
+                <img src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Cosmos" class="resource-image">
+                <p>Carl Sagan's classic work that explores 15 billion years of cosmic evolution.</p>
+                <a href="https://www.carlsagan.com/cosmos/" class="resource-link" target="_blank">Learn More</a>
+            </div>
+            
+            <div class="resource-card">
+                <span class="resource-type">Book</span>
+                <h3>The Martian</h3>
+                <img src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="The Martian" class="resource-image">
+                <p>Andy Weir's science fiction novel about an astronaut stranded on Mars.</p>
+                <a href="https://www.andyweirauthor.com/books/the-martian/" class="resource-link" target="_blank">Learn More</a>
+            </div>
+        </div>
+        
+        <!-- Educational Websites -->
+        <h2>Educational Websites</h2>
+        <div class="resource-grid">
+            <div class="resource-card">
+                <span class="resource-type">Website</span>
+                <h3>NASA's Official Website</h3>
+                <img src="https://www.nasa.gov/wp-content/themes/nasa/assets/images/nasa-logo.svg" alt="NASA" class="resource-image">
+                <p>The official website of NASA with news, images, and information about space exploration.</p>
+                <a href="https://www.nasa.gov" class="resource-link" target="_blank">Visit Site</a>
+            </div>
+            
+            <div class="resource-card">
+                <span class="resource-type">Website</span>
+                <h3>European Space Agency</h3>
+                <img src="https://www.esa.int/extension/pillars/design/pillars/images/ESA_Logo.svg" alt="ESA" class="resource-image">
+                <p>Europe's gateway to space with information about missions, science, and technology.</p>
+                <a href="https://www.esa.int" class="resource-link" target="_blank">Visit Site</a>
+            </div>
+            
+            <div class="resource-card">
+                <span class="resource-type">Website</span>
+                <h3>Space.com</h3>
+                <img src="https://imgs.search.brave.com/fovZFKD2kQWSnYSlP1n1QjjNiFVmyuLACKj-a17uHMo/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvZW4vdGh1bWIv/NC80Yi9TcGFjZS5j/b21fbG9nby5qcGcv/NTEycHgtU3BhY2Uu/Y29tX2xvZ28uanBn" alt="Space.com" class="resource-image">
+                <p>The premier source for space exploration, innovation, and astronomy news.</p>
+                <a href="https://www.space.com" class="resource-link" target="_blank">Visit Site</a>
+            </div>
+        </div>
+        
+        <!-- YouTube Channels -->
+        <h2>YouTube Channels</h2>
+        <div class="resource-grid">
+            <div class="resource-card">
+                <span class="resource-type">Video</span>
+                <h3>Vsauce</h3>
+                <img src="https://imgs.search.brave.com/2lrHtaAfw0fSezVXW7vKSXsn2T5_kbXR20FBllfxaK0/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi9iL2I0L01p/Y2hhZWxfU3RldmVu/c19WaWRDb25fMjAx/Ni5qcGcvNTEycHgt/TWljaGFlbF9TdGV2/ZW5zX1ZpZENvbl8y/MDE2LmpwZw" alt="Vsauce" class="resource-image">
+                <p>Educational videos exploring scientific and philosophical questions about the universe.</p>
+                <a href="https://www.youtube.com/user/Vsauce" class="resource-link" target="_blank">Visit Channel</a>
+            </div>
+            
+            <div class="resource-card">
+                <span class="resource-type">Video</span>
+                <h3>Kurzgesagt – In a Nutshell</h3>
+                <img src="https://imgs.search.brave.com/8uKYho73R3EgDbmOjoUZxwKJVHReAvv5jbcIMDtET7M/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvZW4vdGh1bWIv/Ni82NS9LdXJ6Z2Vz/YWd0LnBuZy81MTJw/eC1LdXJ6Z2VzYWd0/LnBuZw" alt="Kurzgesagt" class="resource-image">
+                <p>Beautifully animated videos explaining complex scientific topics simply.</p>
+                <a href="https://www.youtube.com/c/inanutshell" class="resource-link" target="_blank">Visit Channel</a>
+            </div>
+            
+            <div class="resource-card">
+                <span class="resource-type">Video</span>
+                <h3>PBS Space Time</h3>
+                <img src="https://imgs.search.brave.com/apkNJhIaOzpzEsaxblnCVgZfQSL6OCSdnGik4Q96uYo/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vUXN6SjBz/TWx5a3RQMC1wUERE/Q28zS0t2YTY2LXBn/UHpGWWNlN1h6NXFr/Zy9yczpmaXQ6NTYw/OjMyMDoxOjAvZzpj/ZS9hSFIwY0hNNkx5/OXRMbTFsL1pHbGhM/V0Z0WVhwdmJpNWov/YjIwdmFXMWhaMlZ6/TDAwdi9UVlkxUWxr/eVJUQk9iVlpxL1RX/cEJkRTFVWXpGTlV6/QXcvVFRKR2JFeFVh/ekZOUkVsMC9XVEpS/TlU1cVl6RmFSRVp0/L1drUmthMWhyUlhs/WWEwWngvWTBkalFD/NXFjR2M.jpeg" alt="PBS Space Time" class="resource-image">
+                <p>Deep dives into astrophysics, quantum mechanics, and the nature of the universe.</p>
+                <a href="https://www.youtube.com/c/pbsspacetime" class="resource-link" target="_blank">Visit Channel</a>
+            </div>
+        </div>
+        
+        <!-- Organizations -->
+        <h2>Space Organizations</h2>
+        <ul class="org-list">
+            <li class="org-item">
+                <h3>NASA (National Aeronautics and Space Administration)</h3>
+                <p>The United States government agency responsible for the nation's civilian space program and for aeronautics and aerospace research.</p>
+                <a href="https://www.nasa.gov" class="org-link" target="_blank">https://www.nasa.gov</a>
+            </li>
+            
+            <li class="org-item">
+                <h3>ESA (European Space Agency)</h3>
+                <p>An intergovernmental organization dedicated to the exploration of space, with 22 member states.</p>
+                <a href="https://www.esa.int" class="org-link" target="_blank">https://www.esa.int</a>
+            </li>
+            
+            <li class="org-item">
+                <h3>SpaceX</h3>
+                <p>A private aerospace manufacturer and space transportation company founded by Elon Musk.</p>
+                <a href="https://www.spacex.com" class="org-link" target="_blank">https://www.spacex.com</a>
+            </li>
+            
+            <li class="org-item">
+                <h3>The Planetary Society</h3>
+                <p>A non-governmental, nonprofit foundation dedicated to space exploration advocacy.</p>
+                <a href="https://www.planetary.org" class="org-link" target="_blank">https://www.planetary.org</a>
+            </li>
+        </ul>
+        
+        <!-- Newsletter -->
+        <div class="newsletter">
+            <h2>Stay Updated with Space News</h2>
+            <p>Subscribe to our monthly newsletter for the latest space discoveries, mission updates, and educational resources.</p>
+            <form class="newsletter-form">
+                <input type="email" class="newsletter-input" placeholder="Your email address" required>
+                <button type="submit" class="newsletter-btn">Subscribe</button>
+            </form>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Space Learning Hub | Educational Resources for Space Enthusiasts</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Missions | Space Learning Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --space-dark: #0a0a2a;
+            --space-blue: #4fc3f7;
+            --space-purple: #7b1fa2;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--space-dark);
+            color: white;
+            background-image: url('images/stars-bg.jpg');
+            background-attachment: fixed;
+        }
+        
+        nav {
+            background-color: rgba(10,10,42,0.9);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--space-blue);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        h1, h2 {
+            text-align: center;
+            color: var(--space-blue);
+        }
+        
+        /* Spacecraft Map Styles */
+        #spacecraft-map {
+            width: 100%;
+            height: 600px;
+            background: #000;
+            border-radius: 10px;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .map-controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .map-controls button {
+            background: var(--space-blue);
+            border: none;
+            color: var(--space-dark);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .map-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            padding: 1rem;
+            z-index: 10;
+        }
+        
+        /* Mission Timeline Styles */
+        .mission-timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 3rem auto;
+        }
+        
+        .mission-card {
+            padding: 1.5rem;
+            background: rgba(20, 20, 60, 0.7);
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+            border-left: 4px solid var(--space-blue);
+        }
+        
+        .mission-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+        
+        .mission-card::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: -12px;
+            background-color: var(--space-blue);
+            border-radius: 50%;
+            top: 2rem;
+        }
+        
+        .mission-card h3 {
+            margin-top: 0;
+            color: var(--space-blue);
+        }
+        
+        .mission-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .mission-badge {
+            background: var(--space-purple);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .mission-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .mission-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .mission-gallery img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .mission-gallery img:hover {
+            transform: scale(1.05);
+        }
+        
+        .learn-more {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: transparent;
+            color: var(--space-blue);
+            border: 2px solid var(--space-blue);
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            box-shadow: none;
+            transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+            margin-top: 1rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        
+        .learn-more:hover, .learn-more:focus {
+            background: var(--space-blue);
+            color: #0a0a2a;
+            border-color: #fff;
+            transform: translateY(-2px) scale(1.04);
+            outline: none;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+        }
+        
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        
+        /* Filter Controls */
+        .filter-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            background: rgba(20, 20, 60, 0.7);
+            border: 1px solid var(--space-blue);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--space-blue);
+            color: var(--space-dark);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(10,10,42,0.9);
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            #spacecraft-map {
+                height: 400px;
+            }
+            
+            .mission-card {
+                padding: 1rem;
+            }
+            
+            .mission-card::after {
+                top: 1.5rem;
+            }
+            
+            .mission-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="blackholes.html">Black Holes</a>
+            <a href="missions.html" class="active">Space Missions</a>
+            <a href="telescope.html">Telescopes</a>
+            <a href="games.html">Learning Games</a>
+            <a href="resources.html">Resources</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <h1>Space Mission Tracker</h1>
+        
+        <!-- Spacecraft Map Section -->
+        <h2>Live Spacecraft Positions</h2>
+        <div id="spacecraft-map">
+            <div class="map-controls">
+                <button id="reset-map">Reset View</button>
+                <button id="speed-normal">Speed: 1x</button>
+                <button id="follow-perseverance">Follow Perseverance</button>
+                <button id="follow-iss">Follow ISS</button>
+            </div>
+            <div class="map-info">
+                <h3 id="map-title">Solar System Overview</h3>
+                <p id="map-description">Positions are simulated in real-time using NASA data</p>
+            </div>
+            <!-- NASA Eyes Embed -->
+            <iframe id="nasa-eyes" src="https://eyes.nasa.gov/apps/orrery/#/home" style="width:100%;height:100%;border:none;"></iframe>
+        </div>
+        
+        <!-- Mission Timeline Section -->
+        <h2>Historic & Current Missions</h2>
+        <div class="filter-controls">
+            <button class="filter-btn active" data-filter="all">All Missions</button>
+            <button class="filter-btn" data-filter="moon">Moon Missions</button>
+            <button class="filter-btn" data-filter="mars">Mars Missions</button>
+            <button class="filter-btn" data-filter="current">Current Missions</button>
+            <button class="filter-btn" data-filter="future">Future Missions</button>
+        </div>
+        
+        <div class="mission-timeline">
+            <!-- Apollo 11 -->
+            <div class="mission-card" data-category="moon">
+                <div class="mission-meta">
+                    <span class="mission-badge">1969</span>
+                    <span class="mission-badge">NASA</span>
+                    <span class="mission-badge">Crewed</span>
+                </div>
+                <h3>Apollo 11</h3>
+                <p>The first crewed mission to land on the Moon. Neil Armstrong and Buzz Aldrin became the first humans to walk on the lunar surface on July 20, 1969.</p>
+                <img src="images/apollo11.jpg" alt="Apollo 11" class="mission-image">
+                <div class="mission-gallery">
+                    <img src="images/apollo11-1.jpg" alt="Apollo 11 launch">
+                    <img src="images/apollo11-2.jpg" alt="Moon landing">
+                    <img src="images/apollo11-3.jpg" alt="Astronaut on Moon">
+                </div>
+                <button class="learn-more">View Mission Details</button>
+            </div>
+            
+            <!-- Voyager 1 -->
+            <div class="mission-card" data-category="current">
+                <div class="mission-meta">
+                    <span class="mission-badge">1977</span>
+                    <span class="mission-badge">NASA</span>
+                    <span class="mission-badge">Interstellar</span>
+                </div>
+                <h3>Voyager 1</h3>
+                <p>Launched in 1977, Voyager 1 is the farthest human-made object from Earth. It entered interstellar space in 2012 and still communicates with NASA.</p>
+                <img src="images/voyager.jpg" alt="Voyager 1" class="mission-image">
+                <button class="learn-more">View Mission Details</button>
+            </div>
+            
+            <!-- Mars Perseverance -->
+            <div class="mission-card" data-category="mars current">
+                <div class="mission-meta">
+                    <span class="mission-badge">2020</span>
+                    <span class="mission-badge">NASA</span>
+                    <span class="mission-badge">Rover</span>
+                </div>
+                <h3>Mars Perseverance</h3>
+                <p>NASA's most advanced Mars rover, searching for signs of ancient life and collecting samples for future return to Earth. Landed February 18, 2021.</p>
+                <img src="images/perseverance.jpg" alt="Mars Perseverance" class="mission-image">
+                <div class="mission-gallery">
+                    <img src="images/perseverance-1.jpg" alt="Perseverance launch">
+                    <img src="images/perseverance-2.jpg" alt="Mars landing">
+                    <img src="images/perseverance-3.jpg" alt="Mars surface">
+                </div>
+                <button class="learn-more">View Mission Details</button>
+            </div>
+            
+            <!-- International Space Station -->
+            <div class="mission-card" data-category="current">
+                <div class="mission-meta">
+                    <span class="mission-badge">1998</span>
+                    <span class="mission-badge">NASA/Roscosmos/ESA/JAXA/CSA</span>
+                    <span class="mission-badge">Space Station</span>
+                </div>
+                <h3>International Space Station</h3>
+                <p>The largest human-made object in space, continuously occupied since 2000. A collaborative project between five space agencies.</p>
+                <img src="images/iss.jpg" alt="International Space Station" class="mission-image">
+                <button class="learn-more">View Mission Details</button>
+            </div>
+            
+            <!-- Artemis Program -->
+            <div class="mission-card" data-category="moon future">
+                <div class="mission-meta">
+                    <span class="mission-badge">2024+</span>
+                    <span class="mission-badge">NASA</span>
+                    <span class="mission-badge">Crewed</span>
+                </div>
+                <h3>Artemis Program</h3>
+                <p>NASA's program to return humans to the Moon by 2024, including the first woman and person of color. A stepping stone for future Mars missions.</p>
+                <img src="images/artemis.jpg" alt="Artemis Program" class="mission-image">
+                <button class="learn-more">View Mission Details</button>
+            </div>
+            
+            <!-- James Webb Telescope -->
+            <div class="mission-card" data-category="current">
+                <div class="mission-meta">
+                    <span class="mission-badge">2021</span>
+                    <span class="mission-badge">NASA/ESA/CSA</span>
+                    <span class="mission-badge">Telescope</span>
+                </div>
+                <h3>James Webb Space Telescope</h3>
+                <p>The most powerful space telescope ever built, observing the universe in infrared. Launched December 25, 2021.</p>
+                <img src="images/jwst.jpg" alt="James Webb Telescope" class="mission-image">
+                <div class="mission-gallery">
+                    <img src="images/jwst-1.jpg" alt="JWST launch">
+                    <img src="images/jwst-2.jpg" alt="Telescope in space">
+                    <img src="images/jwst-3.jpg" alt="First images">
+                </div>
+                <button class="learn-more">View Mission Details</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Space Learning Hub | Mission data courtesy of NASA</p>
+    </footer>
+
+    <script>
+        // Image gallery modal
+        const modal = document.getElementById("imageModal");
+        const modalImg = document.getElementById("modalImage");
+        
+        // Get all gallery images and add click handlers
+        document.querySelectorAll('.mission-gallery img').forEach(img => {
+            img.addEventListener('click', function() {
+                modal.style.display = "block";
+                modalImg.src = this.src;
+            });
+        });
+        
+        // Close modal
+        document.querySelector('.close').addEventListener('click', function() {
+            modal.style.display = "none";
+        });
+        
+        // Close when clicking outside image
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+        
+        // Mission filtering
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update active button
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.dataset.filter;
+                const missions = document.querySelectorAll('.mission-card');
+                
+                missions.forEach(mission => {
+                    if (filter === 'all' || mission.dataset.category.includes(filter)) {
+                        mission.style.display = "block";
+                    } else {
+                        mission.style.display = "none";
+                    }
+                });
+            });
+        });
+        
+        // Learn more buttons
+        document.querySelectorAll('.learn-more').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const missionName = this.closest('.mission-card').querySelector('h3').textContent;
+                alert(`Detailed information about ${missionName} would appear here!\n\nThis could link to a dedicated mission page or show expanded details.`);
+            });
+        });
+        
+        // Spacecraft Map Controls
+        document.addEventListener('DOMContentLoaded', function() {
+            const iframe = document.getElementById('nasa-eyes');
+            
+            // Reset view
+            document.getElementById('reset-map').addEventListener('click', function() {
+                iframe.contentWindow.postMessage('reset', 'https://eyes.nasa.gov');
+                document.getElementById('map-title').textContent = "Solar System Overview";
+                document.getElementById('map-description').textContent = "Positions are simulated in real-time using NASA data";
+            });
+            
+            // Change speed
+            let speeds = [1, 10, 100, 1000];
+            let currentSpeed = 0;
+            const speedBtn = document.getElementById('speed-normal');
+            
+            speedBtn.addEventListener('click', function() {
+                currentSpeed = (currentSpeed + 1) % speeds.length;
+                const newSpeed = speeds[currentSpeed];
+                iframe.contentWindow.postMessage(`speed:${newSpeed}`, 'https://eyes.nasa.gov');
+                speedBtn.textContent = `Speed: ${newSpeed}x`;
+            });
+            
+            // Follow specific spacecraft
+            document.getElementById('follow-perseverance').addEventListener('click', function() {
+                iframe.contentWindow.postMessage('follow:Mars2020', 'https://eyes.nasa.gov');
+                document.getElementById('map-title').textContent = "Mars Perseverance Rover";
+                document.getElementById('map-description').textContent = "Current location in Jezero Crater, Mars";
+            });
+            
+            document.getElementById('follow-iss').addEventListener('click', function() {
+                iframe.contentWindow.postMessage('follow:ISS', 'https://eyes.nasa.gov');
+                document.getElementById('map-title').textContent = "International Space Station";
+                document.getElementById('map-description').textContent = "Orbiting Earth at ~400 km altitude";
+            });
+        });
+    </script>
+</body>
+</html>
